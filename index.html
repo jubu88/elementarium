@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elementarium — a tiny alchemy sandbox</title>
+  <meta name="description" content="A falling-sand toy: every pixel is a particle, and rainstorms, wildfires, ecosystems and glassblowing emerge from a handful of local rules. No goal — poke the world and see what it does.">
+  <meta property="og:title" content="Elementarium — a tiny alchemy sandbox">
+  <meta property="og:description" content="A falling-sand toy where weather, wildfires and tiny ecosystems emerge from simple rules. Worlds save as PNG images you can share — or paint in any image editor.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='2' y='2' width='5' height='5' fill='%23f6a821'/><rect x='9' y='2' width='5' height='5' fill='%23306ec4'/><rect x='2' y='9' width='5' height='5' fill='%233a9c4a'/><rect x='9' y='9' width='5' height='5' fill='%23e25822'/></svg>">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header id="topbar">
+    <div id="brand">
+      <h1>ELEMENTARIUM</h1>
+      <span class="sub">a tiny alchemy sandbox</span>
+    </div>
+    <div id="chips"></div>
+    <div id="controls">
+      <label class="brush-label" title="Brush size  ( [ and ] or scroll wheel )">
+        <span>brush</span>
+        <input type="range" id="brush" min="1" max="24" value="4">
+        <span id="brushval">4</span>
+      </label>
+      <button id="speed" title="Simulation speed">2&times;</button>
+      <button id="pause" title="Pause / resume  (space)">&#10074;&#10074;</button>
+      <button id="clear" title="Clear everything  (C)">clear</button>
+      <button id="demo" title="Rebuild the demo scene  (D)">demo</button>
+      <button id="save" title="Save world as PNG  (S)">save</button>
+      <button id="load" title="Load a world PNG &mdash; or drop one on the canvas  (L)">load</button>
+      <button id="helpbtn" title="Help &amp; recipes  (H)">?</button>
+      <input type="file" id="file" accept="image/*" hidden>
+    </div>
+  </header>
+
+  <main id="stage">
+    <canvas id="canvas"></canvas>
+    <div id="hint">draw with the mouse &nbsp;&middot;&nbsp; right-drag erases &nbsp;&middot;&nbsp; scroll changes brush &nbsp;&middot;&nbsp; space pauses</div>
+    <div id="status">
+      <span id="status-left"></span>
+      <span id="status-right"></span>
+    </div>
+  </main>
+
+  <div id="help" class="hidden">
+    <div id="help-card">
+      <h2>Elementarium</h2>
+      <p class="blurb">
+        A falling-sand toy. Every pixel is a particle with a few simple rules —
+        all the interesting stuff happens where they meet. There is no goal.
+        Poke the world and see what it does.
+      </p>
+
+      <h3>Controls</h3>
+      <ul class="cols">
+        <li><b>draw</b> — left mouse / touch</li>
+        <li><b>erase</b> — right mouse</li>
+        <li><b>brush size</b> — scroll, or <kbd>[</kbd> <kbd>]</kbd></li>
+        <li><b>pause</b> — <kbd>space</kbd></li>
+        <li><b>clear</b> — <kbd>C</kbd></li>
+        <li><b>demo scene</b> — <kbd>D</kbd></li>
+        <li><b>elements</b> — <kbd>1</kbd>&ndash;<kbd>0</kbd>, eraser <kbd>E</kbd></li>
+        <li><b>save world PNG</b> — <kbd>S</kbd></li>
+        <li><b>load world</b> — <kbd>L</kbd>, or drop a PNG on the canvas</li>
+        <li><b>this panel</b> — <kbd>H</kbd></li>
+      </ul>
+
+      <h3>Things to try</h3>
+      <ul>
+        <li>Pour <b>water</b> onto <b>lava</b> — it quenches into stone under a burst of steam. You can build with it.</li>
+        <li>Drip <b>lava</b> onto <b>sand</b> to forge <b>glass</b>.</li>
+        <li>Drop <b>seeds</b> by a pond. Plants drink the water and grow.</li>
+        <li><b>Oil</b> floats on water — and burns. Set the sea on fire.</li>
+        <li>Lay a thin trail of <b>gunpowder</b> to a stockpile, then light the far end.</li>
+        <li>Build a weather jar: lava pit and pond in a glass box, separated by a <b>stone</b> divider. The stone conducts heat and glows; the pond simmers; <b>steam</b> condenses on the lid and rains. Roof the lava with glass or the rain will slowly quench it to stone.</li>
+        <li><b>Fungus</b> creeps over plants and wood. Fire stops it — at a price.</li>
+        <li><b>Acid</b> eats almost everything, but not glass. Make a beaker.</li>
+        <li><b>Ice</b> slowly freezes water it touches. <b>Snow</b> piles up, then melts.</li>
+        <li><b>Critters</b> graze on plants, flee smoke, breed when well fed, and starve back into seeds. Build them a garden by a pond — then introduce a problem.</li>
+        <li>Worlds save as PNG images — the picture <i>is</i> the save file. Share them, or paint new ones in any image editor with the palette colors.</li>
+      </ul>
+      <button id="help-close">close</button>
+    </div>
+  </div>
+
+  <script src="js/elements.js"></script>
+  <script src="js/sim.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
