@@ -100,6 +100,7 @@ function render() {
       case STEAM: c = STEAM_FADE[Math.min(31, life[i] >> 3)]; break;
       case SMOKE: c = SMOKE_FADE[Math.min(31, life[i] >> 2)]; break;
       case CRITTER: c = PAL[CRITTER][(shade[i] >> 1) & 31]; break; // bit 0 is facing
+      case PREDATOR: c = PAL[PREDATOR][(shade[i] >> 1) & 31]; break;
       case STONE: { // life is temperature: glow ember-red near lava
         const base = PAL[STONE][shade[i] & 31];
         const h = life[i];

@@ -36,7 +36,8 @@ no server. Plain HTML/CSS/JS.
 | **gunpowder** | pours like sand until something lights it |
 | **fungus** | creeps over plants and wood; flammable, fortunately |
 | **stone** | falls straight down, stacks into pillars; conducts heat from lava (glows, boils water it touches) |
-| **critter** | a one-pixel herbivore: walks, climbs, grazes plants and seeds, flees smoke, won't step into water (but can drown), breeds when well fed, starves back into a seed |
+| **critter** | a one-pixel herbivore: walks, climbs, grazes plants and seeds, flees smoke *and predators*, won't step into water (but can drown), breeds when well fed, starves back into a seed |
+| **predator** | hunts critters: scents them within sight, gives chase, kills on contact. Faster than prey, breeds slowly, starves fast — and also returns to the soil as a seed |
 | **wall / glass** | indestructible / acid-proof scenery |
 
 ## Things to try
@@ -65,6 +66,32 @@ no server. Plain HTML/CSS/JS.
    the box, and crashed. Starved critters become seeds; survivors scavenge the
    seeds; seeds near water sprout. The box oscillates. Carrying capacity is real
    and it is measured in pondweed.
+9. Add a predator and you have a food chain. Fair warning, from a lot of testing:
+   a sealed predator-prey world does **not** settle into tidy oscillating cycles —
+   it overshoots and collapses, usually to a near-dead stalemate. (Why is below.)
+   The fun is in the chase and the crash, not in a stable balance.
+
+## What the ecosystem actually does (an honest lab report)
+
+I tried hard to coax classic predator-prey *cycles* out of this world and couldn't —
+and the reasons turned out to be the interesting part:
+
+- **Movement is diffusion-limited.** Critters wander, they don't migrate toward
+  food; that makes grazing and mate-finding both random-encounter processes.
+- **Breeding is density-dependent (an Allee effect).** You need a neighbor of your
+  own kind to reproduce. Pack critters together and they irrupt from 16 to 100+;
+  spread those same 16 across a big marsh with *unlimited* food and they sit there,
+  never breeding, because they never bump into each other.
+- **So closed worlds overshoot and collapse.** Prey strip their food faster than it
+  regrows, predators feast on the glut, then both crash. At low density nobody can
+  find a mate to recover, and the world deadlocks at a few survivors.
+
+Predators *do* get a directed sense — they scent prey within sight and give chase —
+which makes them lethal, legible hunters when you drop one into a herd. I left the
+prey on a pure random walk on purpose: the asymmetry (hunters seek, grazers drift)
+is what makes a predator feel like a predator. None of this is scripted; it all
+falls out of four rules per critter. A stable balance would need a spatial refuge
+or directed foraging — good future experiments.
 
 ## Worlds are PNG files
 
@@ -101,7 +128,8 @@ No build step, no dependencies, nothing to configure.
 
 - Wind, or a fan element
 - Salt + water → brine; electricity arcing along metal
-- A predator for the critters (the ecosystem currently lacks teeth)
+- Directed foraging or a spatial refuge — the missing ingredient for a *stable*
+  food chain instead of overshoot-and-collapse (see the lab report above)
 - Fish and fireflies — water and air deserve inhabitants too
 - A pressure model, so this world can finally have explosive volcanism
 - Sound: fire crackle, rain hiss, the pop of a powder keg

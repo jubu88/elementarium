@@ -25,7 +25,8 @@ const ACID = 16;
 const GUNPOWDER = 17;
 const FUNGUS = 18;
 const CRITTER = 19;
-const N_ELEMS = 20;
+const PREDATOR = 20;
+const N_ELEMS = 21;
 
 /* Flammability: chance out of 255 that one burning neighbor
    ignites this cell on a given frame. 0 = doesn't burn. */
@@ -57,6 +58,13 @@ const ACID_PROOF = new Uint8Array(N_ELEMS);
 ACID_PROOF[EMPTY] = ACID_PROOF[WALL] = ACID_PROOF[GLASS] = ACID_PROOF[ACID] = 1;
 ACID_PROOF[FIRE] = ACID_PROOF[SMOKE] = ACID_PROOF[STEAM] = ACID_PROOF[LAVA] = 1;
 
+/* Structural cells that block a predator's line of scent — the things
+   you'd build a barrier from. Sand and powders are porous; gases and
+   liquids are see-through. */
+const SCENT_COVER = new Uint8Array(N_ELEMS);
+SCENT_COVER[WALL] = SCENT_COVER[STONE] = SCENT_COVER[GLASS] = 1;
+SCENT_COVER[WOOD] = SCENT_COVER[ICE] = 1;
+
 /* Base color [r,g,b] and shade variation per element. */
 const COLOR = [];
 const VARY = new Uint8Array(N_ELEMS);
@@ -86,6 +94,7 @@ defColor(ACID,      152, 220,  34, 14);
 defColor(GUNPOWDER,  64,  62,  70, 10);
 defColor(FUNGUS,    152,  88, 178, 26);
 defColor(CRITTER,   236, 110, 160, 18);
+defColor(PREDATOR,  198,  40,  56, 16);
 
 /* Toolbar entries, in display order. Hotkeys 1..0 cover the
    first ten; E selects the eraser. */
@@ -106,6 +115,7 @@ const TOOLBAR = [
   { id: ACID,      name: 'acid' },
   { id: FUNGUS,    name: 'fungus' },
   { id: CRITTER,   name: 'critter' },
+  { id: PREDATOR,  name: 'predator' },
   { id: GLASS,     name: 'glass' },
   { id: STEAM,     name: 'steam' },
   { id: EMPTY,     name: 'eraser' },

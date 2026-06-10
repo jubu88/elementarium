@@ -47,8 +47,9 @@ function initLife(e) {
     case FIRE:    return 24 + (R() * 24) | 0;
     case STEAM:   return 110 + (R() * 110) | 0;
     case SMOKE:   return 80 + (R() * 70) | 0;
-    case CRITTER: return 180 + (R() * 50) | 0; // energy
-    default:      return 0;
+    case CRITTER:  return 180 + (R() * 50) | 0; // energy
+    case PREDATOR: return 190 + (R() * 50) | 0; // energy
+    default:       return 0;
   }
 }
 
@@ -103,6 +104,7 @@ function stepSim() {
         case ICE:       updateIce(x, y, i); break;
         case FUNGUS:    updateFungus(x, y, i); break;
         case CRITTER:   updateCritter(x, y, i); break;
+        case PREDATOR:  updatePredator(x, y, i); break;
       }
     }
   }
@@ -400,13 +402,18 @@ function updateCritter(x, y, i) {
     if (je === FIRE || je === LAVA) { setCell(i, FIRE); return; }
     if (je === ACID) { setCell(i, R() < 0.5 ? SMOKE : EMPTY); return; }
     if (je === WATER) submerged++;
-    else if (je === SMOKE) { // run away from where the smoke is
+    else if (je === SMOKE || je === PREDATOR) { // run from smoke and teeth alike
       if (j === i - 1) shade[i] |= 1;
       else if (j === i + 1) shade[i] &= ~1;
     } else if ((je === PLANT || je === SEED) && life[i] < 220 && R() < 0.05) {
       setCell(j, EMPTY);
       life[i] = Math.min(255, life[i] + 70);
     }
+  }
+  // fear has corners: a predator on the diagonal sends them running too
+  if (y > 0 && y < rows - 1) {
+    if (x > 0 && (grid[i - cols - 1] === PREDATOR || grid[i + cols - 1] === PREDATOR)) shade[i] |= 1;
+    else if (x < cols - 1 && (grid[i - cols + 1] === PREDATOR || grid[i + cols + 1] === PREDATOR)) shade[i] &= ~1;
   }
   // mostly underwater: struggle toward the surface, losing energy
   if (submerged >= 3) {
@@ -455,6 +462,105 @@ function updateCritter(x, y, i) {
     }
     if (se !== WATER && y > 0 && grid[side - cols] === EMPTY) { moveCell(i, side - cols); return; }
     shade[i] ^= 1; // blocked (or facing water): turn around
+  }
+}
+
+/* A predator: the critter's body plan with teeth. Hunts critters by
+   contact, moves faster, breeds slower, burns energy quicker. Same
+   conventions: facing in shade bit 0, energy in life. Starves into a
+   seed like everything else — the soil doesn't care who you were. */
+function updatePredator(x, y, i) {
+  // hot metabolism
+  if (R() < 0.025) {
+    if (life[i] <= 1) { setCell(i, SEED); return; }
+    life[i]--;
+  }
+  // senses: hazards kill, contact kills prey
+  let submerged = 0;
+  const n = nb4(x, y, i, NB_A);
+  for (let q = 0; q < n; q++) {
+    const j = NB_A[q];
+    const je = grid[j];
+    if (je === FIRE || je === LAVA) { setCell(i, FIRE); return; }
+    if (je === ACID) { setCell(i, R() < 0.5 ? SMOKE : EMPTY); return; }
+    if (je === WATER) submerged++;
+    else if (je === CRITTER) {
+      grid[j] = EMPTY; life[j] = 0; // the hunt ends
+      life[i] = Math.min(255, life[i] + 90);
+    }
+  }
+  // drowning, same as prey
+  if (submerged >= 3) {
+    if (R() < 0.05) {
+      if (life[i] <= 10) { setCell(i, EMPTY); return; }
+      life[i] -= 10;
+    }
+    if (y > 0) {
+      const up = i - cols;
+      if (grid[up] === EMPTY && R() < 0.6) { moveCell(i, up); return; }
+      if (grid[up] === WATER && R() < 0.6) { swapCells(i, up); return; }
+    }
+  }
+  // gravity first; sinks slowly through water
+  if (y + 1 < rows) {
+    const b = i + cols;
+    if (grid[b] === EMPTY) { moveCell(i, b); return; }
+    if (grid[b] === WATER && R() < 0.25) { swapCells(i, b); return; }
+  }
+  // breeding: pricier than prey. A fed predator beside a mate dens up —
+  // lingers instead of prowling — so pairs actually stay paired.
+  if (life[i] > 210) {
+    let friend = false, nest = -1;
+    const m = nb4(x, y, i, NB_A);
+    for (let q = 0; q < m; q++) {
+      const j = NB_A[q];
+      if (grid[j] === PREDATOR) friend = true;
+      else if (grid[j] === EMPTY) nest = j;
+    }
+    if (friend) {
+      if (nest >= 0 && R() < 0.05) {
+        setCell(nest, PREDATOR);
+        life[nest] = 110;
+        life[i] -= 100;
+      }
+      return; // stay with the mate
+    }
+  }
+  // scent: sweep a few cells each way along the row for prey, and turn
+  // to face the nearer one. This is the hunting twin of the prey's fear
+  // response — it turns blind bumping into pursuit, the missing
+  // ingredient for real predator-prey dynamics. The ray stops at solid
+  // cover, so a wall genuinely hides the herd behind it.
+  const SIGHT = 6;
+  let smell = 0, lOpen = true, rOpen = true;
+  for (let s = 1; s <= SIGHT && (lOpen || rOpen); s++) {
+    if (lOpen && x - s >= 0) {
+      const e = grid[i - s];
+      if (e === CRITTER) { smell = -1; break; }
+      if (SCENT_COVER[e]) lOpen = false; // structural cover hides the herd
+    }
+    if (rOpen && x + s < cols) {
+      const e = grid[i + s];
+      if (e === CRITTER) { smell = 1; break; }
+      if (SCENT_COVER[e]) rOpen = false;
+    }
+  }
+  if (smell) { if (smell > 0) shade[i] &= ~1; else shade[i] |= 1; }
+  // prowl: like the critter's amble, but faster on its feet. On a fresh
+  // scent it commits to the chase rather than dithering.
+  if (smell || R() < 0.5) {
+    let dir = (shade[i] & 1) ? 1 : -1;
+    if (!smell && R() < 0.008) { shade[i] ^= 1; dir = -dir; }
+    const nx = x + dir;
+    if (nx < 0 || nx >= cols) { shade[i] ^= 1; return; }
+    const side = i + dir;
+    const se = grid[side];
+    if (se === EMPTY) {
+      if (y + 1 < rows && grid[side + cols] === WATER) { shade[i] ^= 1; return; }
+      moveCell(i, side); return;
+    }
+    if (se !== WATER && y > 0 && grid[side - cols] === EMPTY) { moveCell(i, side - cols); return; }
+    shade[i] ^= 1;
   }
 }
 
@@ -515,7 +621,8 @@ function paintBrush(cx, cy, radius, e) {
   const r2 = radius * radius;
   const sprinkle = (e === SAND || e === GUNPOWDER || e === SEED || e === SNOW) ? 0.75
                  : (e === FIRE || e === STEAM) ? 0.4
-                 : (e === CRITTER) ? 0.15 : 1;
+                 : (e === CRITTER) ? 0.15
+                 : (e === PREDATOR) ? 0.1 : 1;
   for (let dy = -radius; dy <= radius; dy++) {
     const yy = cy + dy;
     if (yy < 0 || yy >= rows) continue;
