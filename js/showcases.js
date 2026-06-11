@@ -69,7 +69,7 @@ const SHOWCASES = [
   {
     id: 'moat-vs-lava',
     title: 'Two Cabins, One Volcano',
-    blurb: 'An identical wooden cabin sits on each side of a lava spill — but the left one has a water moat. When the lava flows, the moat quenches it into a stone seawall and the boiled-off steam rains back to refill the ditch. The bare cabin on the right has no such luck.',
+    blurb: 'An identical wooden cabin sits on each side of a lava spill — but the left one has a water moat. When the lava flows, the moat quenches it into a stone seawall, throwing off steam as it goes, and the cabin behind it is spared. The bare cabin on the right has no such luck.',
     watch: 'The moated cabin survives untouched while the lava self-dams into a stone seawall against the water. The exposed cabin is reached by the flow and burns.',
     build() {
       const W = cols, H = rows, gy = H - Math.round(H * 0.06);
