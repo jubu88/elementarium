@@ -18,6 +18,27 @@ no server. Plain HTML/CSS/JS.
 - **Draw** with the left mouse button, **erase** with the right.
 - **Scroll** (or `[` / `]`) changes brush size. **Space** pauses. `C` clears, `D` rebuilds the demo scene, `H` opens help.
 - Number keys `1`–`0` pick the first ten elements.
+- `G` opens the **showcases** — pre-built scenes that each demonstrate one thing this
+  world does on its own, with a caption explaining what to watch for. The fastest way
+  to see what the toy is about: open it and click through them.
+
+## Showcases
+
+If you only do one thing, press `G` and try these. Each is a hand-built scene that
+loads instantly and explains itself; everything they show emerges from the rules,
+nothing is scripted.
+
+| | |
+|---|---|
+| **A World in a Bottle** | a sealed weather cycle — lava boils a pond through a stone wall, steam rains off the lid, forever |
+| **Two Cabins, One Volcano** | identical cabins, one with a moat; watch which survives the lava |
+| **Glassblowing** | a lava pool fusing the sand dune beneath it into glass |
+| **Setting the Sea on Fire** | one spark burns an oil slick off a pond; the water survives |
+| **Light the Fuse** | a gunpowder trail to a powder keg, lit at the far end |
+| **Rot and the Firebreak** | fungus eats one grove and stops dead at a water moat; the other grove stays green |
+| **Predator and Shelter** | a hunter runs down an exposed herd while a walled herd grazes on, safe behind glass |
+| **Overshoot** | a few critters irrupt into a swarm and strip their meadow bare — carrying capacity, the hard way |
+| **Life in a Jar** | a whole sealed ecosystem that thrives for a long time, then slowly winds down |
 
 ## The elements
 

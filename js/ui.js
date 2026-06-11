@@ -227,6 +227,48 @@ document.getElementById('helpbtn').addEventListener('click', () => helpEl.classL
 document.getElementById('help-close').addEventListener('click', () => helpEl.classList.add('hidden'));
 helpEl.addEventListener('click', e => { if (e.target === helpEl) helpEl.classList.add('hidden'); });
 
+/* ---------- showcase gallery ---------- */
+
+const galleryEl = document.getElementById('gallery-overlay');
+const galleryGrid = document.getElementById('gallery-grid');
+const captionEl = document.getElementById('caption');
+
+for (const sc of SHOWCASES) {
+  const tile = document.createElement('button');
+  tile.className = 'showcase-tile';
+  const title = document.createElement('span');
+  title.className = 'st-title';
+  title.textContent = sc.title;
+  const blurb = document.createElement('span');
+  blurb.className = 'st-blurb';
+  blurb.textContent = sc.blurb;
+  tile.append(title, blurb);
+  tile.addEventListener('click', () => loadShowcase(sc.id));
+  galleryGrid.append(tile);
+}
+
+function openGallery() { galleryEl.classList.remove('hidden'); }
+function closeGallery() { galleryEl.classList.add('hidden'); }
+
+function loadShowcase(id) {
+  const sc = SHOWCASE_BY_ID[id];
+  if (!sc) return;
+  clearSim();
+  sc.build();
+  document.getElementById('caption-title').textContent = sc.title;
+  document.getElementById('caption-blurb').textContent = sc.blurb;
+  document.getElementById('caption-watch-text').textContent = sc.watch;
+  captionEl.classList.remove('hidden');
+  if (paused) togglePause(); // make sure it's running so the audience sees it
+  closeGallery();
+  hintEl.classList.add('fade');
+}
+
+document.getElementById('gallery').addEventListener('click', openGallery);
+document.getElementById('gallery-close').addEventListener('click', closeGallery);
+galleryEl.addEventListener('click', e => { if (e.target === galleryEl) closeGallery(); });
+document.getElementById('caption-close').addEventListener('click', () => captionEl.classList.add('hidden'));
+
 window.addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return;
   const k = e.key;
@@ -237,7 +279,8 @@ window.addEventListener('keydown', e => {
   else if (k === 's' || k === 'S') saveWorld();
   else if (k === 'l' || k === 'L') fileInput.click();
   else if (k === 'h' || k === 'H' || k === '?') helpEl.classList.toggle('hidden');
-  else if (k === 'Escape') helpEl.classList.add('hidden');
+  else if (k === 'g' || k === 'G') galleryEl.classList.toggle('hidden');
+  else if (k === 'Escape') { helpEl.classList.add('hidden'); closeGallery(); captionEl.classList.add('hidden'); }
   else if (k === '[') setBrush(brushSize - 1);
   else if (k === ']') setBrush(brushSize + 1);
   else if (k >= '1' && k <= '9') { const t = TOOLBAR[+k - 1]; if (t) selectElement(t.id); }

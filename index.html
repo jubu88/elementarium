@@ -28,6 +28,7 @@
       <button id="pause" title="Pause / resume  (space)">&#10074;&#10074;</button>
       <button id="clear" title="Clear everything  (C)">clear</button>
       <button id="demo" title="Rebuild the demo scene  (D)">demo</button>
+      <button id="gallery" title="Showcase scenes  (G)">showcases</button>
       <button id="save" title="Save world as PNG  (S)">save</button>
       <button id="load" title="Load a world PNG &mdash; or drop one on the canvas  (L)">load</button>
       <button id="helpbtn" title="Help &amp; recipes  (H)">?</button>
@@ -42,11 +43,27 @@
       <span id="status-left"></span>
       <span id="status-right"></span>
     </div>
+
+    <div id="caption" class="hidden">
+      <button id="caption-close" title="Dismiss" aria-label="Dismiss caption">&times;</button>
+      <h3 id="caption-title"></h3>
+      <p id="caption-blurb"></p>
+      <p id="caption-watch"><span class="watch-label">Watch for</span> <span id="caption-watch-text"></span></p>
+    </div>
   </main>
 
-  <div id="help" class="hidden">
+  <div id="gallery-overlay" class="hidden" role="dialog" aria-modal="true" aria-labelledby="gallery-heading">
+    <div id="gallery-card">
+      <h2 id="gallery-heading">Showcases</h2>
+      <p class="blurb">Hand-built scenes, each demonstrating one thing this little world does on its own. Pick one and watch — every behavior here emerges from the same simple rules, nothing is scripted.</p>
+      <div id="gallery-grid"></div>
+      <button id="gallery-close">close</button>
+    </div>
+  </div>
+
+  <div id="help" class="hidden" role="dialog" aria-modal="true" aria-labelledby="help-heading">
     <div id="help-card">
-      <h2>Elementarium</h2>
+      <h2 id="help-heading">Elementarium</h2>
       <p class="blurb">
         A falling-sand toy. Every pixel is a particle with a few simple rules —
         all the interesting stuff happens where they meet. There is no goal.
@@ -61,6 +78,7 @@
         <li><b>pause</b> — <kbd>space</kbd></li>
         <li><b>clear</b> — <kbd>C</kbd></li>
         <li><b>demo scene</b> — <kbd>D</kbd></li>
+        <li><b>showcases</b> — <kbd>G</kbd></li>
         <li><b>elements</b> — <kbd>1</kbd>&ndash;<kbd>0</kbd>, eraser <kbd>E</kbd></li>
         <li><b>save world PNG</b> — <kbd>S</kbd></li>
         <li><b>load world</b> — <kbd>L</kbd>, or drop a PNG on the canvas</li>
@@ -88,6 +106,7 @@
 
   <script src="js/elements.js"></script>
   <script src="js/sim.js"></script>
+  <script src="js/showcases.js"></script>
   <script src="js/ui.js"></script>
 </body>
 </html>
